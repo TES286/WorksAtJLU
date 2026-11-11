@@ -23,7 +23,6 @@ void scan_int(int numbers[N], int limit) {
   }
 }
 
-
 void swap(int* numbers, int a, int b) {
   int tmp = numbers[a];
   numbers[a] = numbers[b];
@@ -35,11 +34,11 @@ void copy(int* src, int* dst, int n) {
   while (n--) dst[n] = src[n];
 }
 
-void sort(int* numbers, int len) {
+void sort_(int* numbers, int len, int* tmp) {
   if (len <= 1) {
     return;
   } else if (len == 2) {
-    if (numbers[0] < numbers[1]) {
+    if (numbers[0] <= numbers[1]) {
       return;
     } else {
       swap(numbers, 0, 1);
@@ -48,12 +47,11 @@ void sort(int* numbers, int len) {
   }
 
   int a = len / 2, b = len - a;
-  sort(numbers, a);
-  sort(&numbers[a], b);
-  int* tmp = (int*)malloc(sizeof(int) * len);
+  sort_(numbers, a, tmp);
+  sort_(&numbers[a], b, &tmp[a]);
   int i = 0, i1 = 0, i2 = a;
   while (i1 < a && i2 < len) {
-    if (numbers[i1] < numbers[i2]) {
+    if (numbers[i1] <= numbers[i2]) {
       tmp[i++] = numbers[i1++];
     } else {
       tmp[i++] = numbers[i2++];
@@ -62,6 +60,14 @@ void sort(int* numbers, int len) {
   copy(&numbers[i1], &tmp[i], a - i1);
   copy(&numbers[i2], &tmp[i], len - i2);
   copy(tmp, numbers, len);
+}
+
+void sort(int* numbers, int len){
+  int* tmp = (int*)malloc(sizeof(int)*len);
+  if(tmp==NULL) return;
+
+  sort_(numbers, len, tmp);
+
   free(tmp);
 }
 
@@ -70,6 +76,6 @@ int main() {
   scanf("%d %d", &n, &m);
   int numbers[N];
   scan_int(numbers, n * m);
-  sort(numbers, n*m);
+  sort(numbers, n * m);
   print_matrix(numbers, n, m);
 }
